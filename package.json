@@ -1,6 +1,6 @@
 {
   "name": "rcj-scoring",
-  "version": "25.1.11",
+  "version": "25.2.0",
   "copyright": "2016-2025 RoboCupJunior Rescue CMS Development SubCommittee",
   "private": true,
   "scripts": {
@@ -19,6 +19,7 @@
     "connect-mongo": "5.1.0",
     "cookie-parser": "1.4.6",
     "dateformat": "4.6.3",
+    "decimal.js": "^10.6.0",
     "escape-html": "1.0.3",
     "express": "4.20.0",
     "express-rate-limit": "5.4.0",
