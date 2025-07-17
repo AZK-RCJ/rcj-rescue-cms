@@ -25,7 +25,7 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
     })
 
     $scope.getIframeSrc = function (field) {
-        return `/signage/field/${competitionId}/${field._id}`;
+        return `/signage/field/${competitionId}/${field._id}?league=${new URL(window.location.href).searchParams.get('league') || 'all'}`;
     };
 
     $scope.range = function (n) {

@@ -370,8 +370,9 @@ app.controller('RunAdminController', ['$scope', '$http', '$log', '$location', 'U
         }
 
         $scope.go = function (path) {
-            path = path + '?return=' + window.location.pathname;
-            window.location = path
+            const separator = path.includes('?') ? '&' : '?';
+            path = path + separator + 'return=' + encodeURIComponent(window.location.pathname);
+            window.location = path;
         }
 
         $scope.format = "yyyy-MM-dd"
