@@ -29,10 +29,13 @@ html(ng-app="ddApp")
         .row(style="margin-top: 3vh;text-align:center;")
           .col-12
             h1 Next Game...
-          .col-12 
+          .col-12
+            h4
+              span.badge.badge-success(ng-hide="behindSchedule(nextGame)") On Time
+              span.badge.badge-danger(ng-show="behindSchedule(nextGame)") Behind Schedule
             i.far.fa-clock.fa-4x &nbsp;{{nextGame.startTime | date:"HH:mm"}} ~
           .col-12
             br
-            br
+            // Hide the team code and name for internal use
             //h2 {{nextGame.team.teamCode}}
-            h2 {{nextGame.team.name}}
+            //h2 {{nextGame.team.name}}

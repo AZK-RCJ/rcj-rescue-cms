@@ -97,4 +97,12 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
         update();
         $scope.$apply();
     }, 5000);
+
+    $scope.behindSchedule = function (game) {
+        // Check if the game has a start time and if it is in the past more then 5 minutes
+        if (game.startTime && game.startTime < Date.now() - 5 * 60 * 1000) {
+            return true;
+        }
+        return false;
+    }
 }])
