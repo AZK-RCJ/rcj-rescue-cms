@@ -708,7 +708,7 @@ app.controller('ddController', ['$scope', '$uibModal', '$log', '$timeout', '$htt
     if (timeIncrement) {
         // Increment timer in every second (setInterval)
         setInterval(function () {
-            if ($scope.minutes < 8) {
+            if ($scope.minutes < 8 && $scope.status == 2) {
                 if ($scope.seconds < 59) {
                     $scope.seconds++;
                 } else {
