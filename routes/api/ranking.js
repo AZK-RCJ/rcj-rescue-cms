@@ -70,7 +70,7 @@ publicRouter.get('/:competitionId/:leagueId', async function (req, res, next) {
   // Apply score adjustment
   allRunsLeague.map(run => {
     if (run.adjustment != null) {
-      run.score = new Decimal(run.score).times((run.adjustment + 100) / 100);
+      run.score = new Decimal(run.score).times((run.adjustment + 100) / 100).toNumber();
     }
   });
 
@@ -660,9 +660,9 @@ function sortFinalScore(a, b) {
 
 function sum(array) {
   if (array.length == 0) return 0;
-  return array.reduce(function(a,b){
-    return a + b;
-  });
+  return array.reduce(function(a, b) {
+    return Number(a) + Number(b);
+  }, 0);
 }
 
 adminRouter.get('/:competitionId/:leagueId/document', async function (req, res, next) {
