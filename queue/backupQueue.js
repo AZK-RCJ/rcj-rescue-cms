@@ -138,9 +138,20 @@ backupQueue.process('backup', function(job, done){
       let users = data.filter(d => 
         d.superDuperAdmin ||
         d.competitions.some(dd => 
-          dd.id.toString() == competitionId && dd.accessLevel > 0
+          dd.id.toString() == competitionId && (dd.accessLevel > 0 || dd.role && dd.role.length > 0)
         )
-      )
+      ).map (d => { // Only keep own competition access
+        return {
+          _id: d._id,
+          username: d.username,
+          password: d.password,
+          salt: d.salt,
+          email: d.email,
+          admin: d.admin,
+          superDuperAdmin: d.superDuperAdmin,
+          competitions: d.competitions.filter(dd => dd.id.toString() == competitionId)
+        }
+      })
       fs.writeFile(`${folderPathTmp}/users.json`, JSON.stringify(users), (err) => {
         if(err){
           done(new Error(err));
@@ -328,9 +339,41 @@ backupQueue.process('restore', function(job, done){
             accumulator = await accumulator;
             if (fileName == "users") {
               let exist = await userdb.user.findOne({username: currentValue.username}).exec();
-              if (exist && !exist._id.equals(currentValue._id)) {
-                console.log(`Skip import for user: ${currentValue.username}`);
+              if (exist && exist._id.toString() == currentValue._id) {
+                console.log(`Found the user: ${currentValue.username}, update competition access level`);
+                exist.competitions = exist.competitions.filter(c => c != null && c.id != null);
+                if(exist.competitions.some(c => c.id.toString() == competition[0]._id)){
+                  for(let c of exist.competitions){
+                    if(c.id.toString() == competition[0]._id) {
+                      console.log(`Updated existing competition access level.`);
+                      let competitionAccess = currentValue.competitions.find(cc => cc.id.toString() == competition[0]._id);
+                      if (competitionAccess) {
+                        c.accessLevel = competitionAccess.accessLevel;
+                        c.role = competitionAccess.role;
+                      } else {
+                        accumulator;
+                      }
+                    }
+                  }
+                } else {
+                  console.log(`Added new competition access level.`);
+                  exist.competitions.push(currentValue.competitions[0]);
+                }
+                accumulator.push(
+                  {
+                    updateOne: {
+                        filter: {_id: currentValue._id},
+                        update: {
+                          competitions: exist.competitions
+                        }, 
+                        upsert: true
+                    }
+                  }
+                );
                 return accumulator;
+              } else if (exist && exist._id.toString() != currentValue._id) {
+                console.log(`Found the user: ${currentValue.username}, but the ID is different, add prefix to username then register as new user.`);
+                currentValue.username = `${currentValue.username}_restored_${Math.floor( new Date().getTime() / 1000 )}`;
               }
             }
             accumulator.push(
