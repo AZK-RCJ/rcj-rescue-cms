@@ -6,7 +6,7 @@ let mongo = {
   // It is RECOMMENDED to use connectionString instead of individual params, other options will be removed later.
   // More info here: https://docs.mongodb.com/manual/reference/connection-string/
   connectionString: process.env.DB_CONNECT_STR,
-  ssl: false,
+  ssl: true,
 
 };
 
